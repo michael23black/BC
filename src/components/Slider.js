@@ -16,9 +16,9 @@ const Label = styled.Text`
   color: #000000;
 `;
 
-class MixerScreen extends Component {
+class MySlider extends Component {
   render() {
-    const { label, big, ...props } = this.props;
+    const { label, onSlidingComplete } = this.props;
     return (
       <Container>
         {label && (
@@ -27,10 +27,11 @@ class MixerScreen extends Component {
           </Label>
         )}
         <Slider
-          {...props}
+          onSlidingComplete={value => onSlidingComplete(value)}
           minimumTrackTintColor={"#000000"}
           maximumTrackTintColor={"#cccccc"}
-          maximumValue={big ? 270 : 180}
+          minimumValue={0}
+          maximumValue={100}
           thumbTintColor={"#000000"}
           style={{ marginHorizontal: 10 }}
         />
@@ -39,4 +40,4 @@ class MixerScreen extends Component {
   }
 }
 
-export default MixerScreen;
+export default MySlider;

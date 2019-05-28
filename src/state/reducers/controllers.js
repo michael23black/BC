@@ -1,5 +1,4 @@
 import actionGenerator from "../../utils/actionGenerator";
-import { connectionActions } from "./connection";
 
 const reducerName = "controllers";
 
@@ -36,8 +35,8 @@ export default function reducer(state = initialState, action) {
   }
 }
 
-export function writeToDevice(id, data) {
-  return { type: controllersActions.writeToDevice.self, id, data };
+export function writeToDevice(id, data    ) {
+  return { type: controllersActions.writeToDevice.self, id, data};
 }
 export function writeToDeviceStart() {
   return { type: controllersActions.writeToDevice.start };
