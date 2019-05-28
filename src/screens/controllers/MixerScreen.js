@@ -22,27 +22,74 @@ const ButtonsContainer = styled.View`
 
 class MixerScreen extends Component {
   render() {
-    const { device, onWriteToDevices } = this.props;
+    const { device, onWriteToDevice } = this.props;
     return (
       <Container>
         <Header
           withBack
           render={
             <ButtonsContainer>
-              <Button icon={require("../../images/reset.png")} text={"RESET"} />
-              <Button icon={require("../../images/save.png")} text={"SAVE"} />
-              <Button icon={require("../../images/play.png")} text={"RUN"} />
+              <Button
+                onPress={() => onWriteToDevice(device, "RESET")}
+                icon={require("../../images/reset.png")}
+                text={"RESET"}
+              />
+              <Button
+                onPress={() => onWriteToDevice(device, "SAVE")}
+                icon={require("../../images/save.png")}
+                text={"SAVE"}
+              />
+              <Button
+                onPress={() => onWriteToDevice(device, "RUN")}
+                icon={require("../../images/play.png")}
+                text={"RUN"}
+              />
             </ButtonsContainer>
           }
         />
         <ScrollView>
-          <Slider label={"GRIP"} />
-          <Slider label={"WRIST BEND"} />
-          <Slider label={"WRIST ROTATION"} />
-          <Slider big label={"ELBOW"} />
-          <Slider big label={"SHOULDER"} />
-          <Slider big label={"BASE"} />
-          <Slider label={"SPEED"} />
+          <Slider
+            onSlidingComplete={value =>
+              onWriteToDevice(device, `S6${parseInt(value)}`)
+            }
+            label={"GRIP"}
+          />
+          <Slider
+            onSlidingComplete={value =>
+              onWriteToDevice(device, `S5${parseInt(value)}`)
+            }
+            label={"WRIST BEND"}
+          />
+          <Slider
+            onSlidingComplete={value =>
+              onWriteToDevice(device, `S4${parseInt(value)}`)
+            }
+            label={"WRIST ROTATION"}
+          />
+          <Slider
+            onSlidingComplete={value =>
+              onWriteToDevice(device, `S3${parseInt(value)}`)
+            }
+            label={"ELBOW"}
+          />
+          <Slider
+            onSlidingComplete={value =>
+              onWriteToDevice(device, `S2${parseInt(value)}`)
+            }
+            label={"SHOULDER"}
+          />
+          <Slider
+            onSlidingComplete={value =>
+              onWriteToDevice(device, `S1${parseInt(value)}`)
+            }
+            label={"BASE"}
+          />
+          <Slider
+            onSlidingComplete={value =>
+              onWriteToDevice(device, `SS${parseInt(value)}`)
+            }
+            label={"SPEED"}
+          />
         </ScrollView>
       </Container>
     );
@@ -54,7 +101,7 @@ const mapStateToProps = state => ({
   device: state.connection.device
 });
 const mapDispatchToProps = dispatch => ({
-  onWriteToDevices: (id, data) => {
+  onWriteToDevice: (id, data) => {
     dispatch(writeToDevice(id, data));
   }
 });
