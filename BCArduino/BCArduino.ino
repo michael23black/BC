@@ -44,6 +44,7 @@ int Servo_1_Prev_Pos, Servo_2_Prev_Pos, Servo_3_Prev_Pos, Servo_4_Prev_Pos, Serv
 int Servo_1_Story_Pos[50], Servo_2_Story_Pos[50], Servo_3_Story_Pos[50], Servo_4_Story_Pos[50], Servo_5_Story_Pos[50], Servo_6_Story_Pos[50];
 
 //Прочие переменные
+int New_Angle;
 String Data_In = "";
 int Speed = 20;
 int Index = 0;
@@ -72,42 +73,48 @@ void loop(){
     
     //Обработчик первого сервопривода 
     if (Data_In.startsWith("S1")){
-      Servo_1_Pos = map(parseAngle(Data_In, 2), Bottom_Limit, Top_Limit, Servo_1_Bottom_Limit, Servo_1_Top_Limit);
+      New_Angle = constrain(parseAngle(Data_In, 2), Bottom_Limit, Top_Limit);
+      Servo_1_Pos = map(New_Angle, Bottom_Limit, Top_Limit, Servo_1_Bottom_Limit, Servo_1_Top_Limit);
       moveServoInCourse(Servo_1, Servo_1_Prev_Pos, Servo_1_Pos);
       Servo_1_Prev_Pos = Servo_1_Pos;
     } 
     
     //Обработчик второго сервопривода 
     if (Data_In.startsWith("S2")){
-      Servo_2_Pos = map(parseAngle(Data_In, 2), Bottom_Limit, Top_Limit, Servo_2_Bottom_Limit, Servo_2_Top_Limit);
+      New_Angle = constrain(parseAngle(Data_In, 2), Bottom_Limit, Top_Limit);
+      Servo_2_Pos = map(New_Angle, Bottom_Limit, Top_Limit, Servo_2_Bottom_Limit, Servo_2_Top_Limit);
       moveServoInCourse(Servo_2, Servo_2_Prev_Pos, Servo_2_Pos);
       Servo_2_Prev_Pos = Servo_2_Pos;
     }
      
     //Обработчик третьего сервопривода 
     if (Data_In.startsWith("S3")){
-      Servo_3_Pos = map(parseAngle(Data_In, 2), Bottom_Limit, Top_Limit, Servo_3_Bottom_Limit, Servo_3_Top_Limit);
+      New_Angle = constrain(parseAngle(Data_In, 2), Bottom_Limit, Top_Limit);
+      Servo_3_Pos = map(New_Angle, Bottom_Limit, Top_Limit, Servo_3_Bottom_Limit, Servo_3_Top_Limit);
       moveServoInCourse(Servo_3, Servo_3_Prev_Pos, Servo_3_Pos);
       Servo_3_Prev_Pos = Servo_3_Pos;
     }
 
      //Обработчик четвертого сервопривода 
     if (Data_In.startsWith("S4")){
-      Servo_4_Pos = map(parseAngle(Data_In, 2), Bottom_Limit, Top_Limit, Servo_4_Bottom_Limit, Servo_4_Top_Limit);
+      New_Angle = constrain(parseAngle(Data_In, 2), Bottom_Limit, Top_Limit);
+      Servo_4_Pos = map(New_Angle, Bottom_Limit, Top_Limit, Servo_4_Bottom_Limit, Servo_4_Top_Limit);
       moveServoInCourse(Servo_4, Servo_4_Prev_Pos, Servo_4_Pos);
       Servo_4_Prev_Pos = Servo_4_Pos;
     } 
     
     //Обработчик пятого сервопривода 
     if (Data_In.startsWith("S5")){
-      Servo_5_Pos = map(parseAngle(Data_In, 2), Bottom_Limit, Top_Limit, Servo_5_Bottom_Limit, Servo_5_Top_Limit);
+      New_Angle = constrain(parseAngle(Data_In, 2), Bottom_Limit, Top_Limit);
+      Servo_5_Pos = map(New_Angle, Bottom_Limit, Top_Limit, Servo_5_Bottom_Limit, Servo_5_Top_Limit);
       moveServoInCourse(Servo_5, Servo_5_Prev_Pos, Servo_5_Pos);
       Servo_5_Prev_Pos = Servo_5_Pos;
     }
      
     //Обработчик шестого сервопривода 
     if (Data_In.startsWith("S6")){
-      Servo_6_Pos = map(parseAngle(Data_In, 2), Bottom_Limit, Top_Limit, Servo_6_Bottom_Limit, Servo_6_Top_Limit);
+      New_Angle = constrain(parseAngle(Data_In, 2), Bottom_Limit, Top_Limit);
+      Servo_6_Pos = map(New_Angle, Bottom_Limit, Top_Limit, Servo_6_Bottom_Limit, Servo_6_Top_Limit);
       moveServoInCourse(Servo_6, Servo_6_Prev_Pos, Servo_6_Pos);
       Servo_6_Prev_Pos = Servo_6_Pos;
     }
@@ -203,8 +210,16 @@ void runServosParallel() {
 }
 //Движение сервоприводов
 void runServos() {
+  //Записываем начальные положения, как конечные для сервоприводов 
+  Servo_1_Story_Pos[Index] = Servo_1_Story_Pos[0];
+  Servo_2_Story_Pos[Index] = Servo_2_Story_Pos[0];
+  Servo_3_Story_Pos[Index] = Servo_3_Story_Pos[0];
+  Servo_4_Story_Pos[Index] = Servo_4_Story_Pos[0];
+  Servo_5_Story_Pos[Index] = Servo_5_Story_Pos[0];
+  Servo_6_Story_Pos[Index] = Servo_6_Story_Pos[0];
+  
   while (Data_In != "RESET" || Data_In != "INITIAL") {
-    for (int i = 0; i <= Index - 2; i++) {
+    for (int i = 0; i <= Index - 1; i++) {
       if (Serial.available()) {     
         Data_In = Serial.readString();  
         
