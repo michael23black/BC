@@ -41,7 +41,7 @@ int Servo_1_Pos, Servo_2_Pos, Servo_3_Pos, Servo_4_Pos, Servo_5_Pos, Servo_6_Pos
 //Предыдущие положения сервоприводов
 int Servo_1_Prev_Pos, Servo_2_Prev_Pos, Servo_3_Prev_Pos, Servo_4_Prev_Pos, Servo_5_Prev_Pos, Servo_6_Prev_Pos;
 //История положений сервоприводов
-int Servo_1_Story_Pos[100], Servo_2_Story_Pos[100], Servo_3_Story_Pos[100], Servo_4_Story_Pos[100], Servo_5_Story_Pos[100], Servo_6_Story_Pos[100];
+int Servo_1_Story_Pos[50], Servo_2_Story_Pos[50], Servo_3_Story_Pos[50], Servo_4_Story_Pos[50], Servo_5_Story_Pos[50], Servo_6_Story_Pos[50];
 
 //Прочие переменные
 String Data_In = "";
@@ -128,7 +128,7 @@ void loop(){
       Index++;             
     }
     if (Data_In == "RUN") {
-      runServosConsistently();
+      runServos();
     }
     //Обработчик сброса
     if ( Data_In == "RESET") {
@@ -188,37 +188,45 @@ void moveServoInCourse(Servo &Current_Servo, int Servo_Prev_Pos, int Servo_Pos) 
     }
   }
 }
+//Последовательное движение всех сервоприводов
+void runServosConsistently(int index) {
+  moveServoInCourse(Servo_1, Servo_1_Story_Pos[index], Servo_1_Story_Pos[index + 1]);
+  moveServoInCourse(Servo_2, Servo_2_Story_Pos[index], Servo_2_Story_Pos[index + 1]);
+  moveServoInCourse(Servo_3, Servo_3_Story_Pos[index], Servo_3_Story_Pos[index + 1]);
+  moveServoInCourse(Servo_4, Servo_4_Story_Pos[index], Servo_4_Story_Pos[index + 1]);
+  moveServoInCourse(Servo_5, Servo_5_Story_Pos[index], Servo_5_Story_Pos[index + 1]);
+  moveServoInCourse(Servo_6, Servo_6_Story_Pos[index], Servo_6_Story_Pos[index + 1]);
+}
+//Параллельное движение всех сервоприводов
+void runServosParallel() {
 
-//Последовательное движение между положениями
-void runServosConsistently() {
-  while (Data_In != "RESET" || Data_In == "INITIAL") {
+}
+//Движение сервоприводов
+void runServos() {
+  while (Data_In != "RESET" || Data_In != "INITIAL") {
     for (int i = 0; i <= Index - 2; i++) {
       if (Serial.available()) {     
-        Data_In = Serial.readString();
-        if ( Data_In == "PAUSE") {  
-          while (Data_In != "RUN") {         
-            if (Serial.available()) {
-              Data_In = Serial.readString();
-              if ( Data_In == "RESET" || Data_In == "INITIAL") {     
-                break;
-              }
-            }
+        Data_In = Serial.readString();  
+        
+        while (Data_In == "PAUSE") {         
+          if (Serial.available()) {
+            Data_In = Serial.readString();
           }
+        }
+        
+        if ( Data_In == "RESET" || Data_In == "INITIAL") {     
+          break;
         }
         
         if (Data_In.startsWith("SS")) {
           Speed = map(parseAngle(Data_In, 2), Bottom_Limit, Top_Limit, Speed_Bottom_Limit, Speed_Top_Limit);
         }
       }
-      moveServoInCourse(Servo_1, Servo_1_Story_Pos[i], Servo_1_Story_Pos[i + 1]);
-      moveServoInCourse(Servo_2, Servo_2_Story_Pos[i], Servo_2_Story_Pos[i + 1]);
-      moveServoInCourse(Servo_3, Servo_3_Story_Pos[i], Servo_3_Story_Pos[i + 1]);
-      moveServoInCourse(Servo_4, Servo_4_Story_Pos[i], Servo_4_Story_Pos[i + 1]);
-      moveServoInCourse(Servo_5, Servo_5_Story_Pos[i], Servo_5_Story_Pos[i + 1]);
-      moveServoInCourse(Servo_6, Servo_6_Story_Pos[i], Servo_6_Story_Pos[i + 1]);
+      runServosConsistently(i);
+    }
+    
+    if ( Data_In == "RESET" || Data_In == "INITIAL") {     
+      break;
     }
   }
-}
-void runServosParallel() {
-
 }
