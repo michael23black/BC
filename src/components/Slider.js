@@ -9,29 +9,51 @@ const Container = styled.View`
   border-radius: 5px;
   background-color: #ffffff;
 `;
+const LabelContainer = styled.View`
+  flex-direction: row;
+  align-items: flex-end;
+`;
 const Label = styled.Text`
-  margin: 10px 10px 0 10px;
+  flex: 1;
+  margin: 10px 10px 0 0;
   font-family: "Averin";
   font-size: 15px;
   color: #000000;
 `;
+const Icon = styled.Image`
+  height: 25px;
+  width: 25px;
+  margin-horizontal: 10px;
+`;
 
 class MySlider extends Component {
   render() {
-    const { label, onSlidingComplete } = this.props;
+    const {
+      inverse,
+      value,
+      leftIcon,
+      rightIcon,
+      label,
+      onSlidingComplete
+    } = this.props;
     return (
       <Container>
         {label && (
-          <Label>
-            NODE {`\u25CF`} {label}
-          </Label>
+          <LabelContainer>
+            {leftIcon && <Icon source={leftIcon} />}
+            <Label>
+              NODE {`\u25CF`} {label}
+            </Label>
+            {rightIcon && <Icon source={rightIcon} />}
+          </LabelContainer>
         )}
         <Slider
-          onSlidingComplete={value => onSlidingComplete(value)}
+          value={value}
+          onSlidingComplete={value => onSlidingComplete(Math.abs(value))}
           minimumTrackTintColor={"#000000"}
           maximumTrackTintColor={"#cccccc"}
-          minimumValue={0}
-          maximumValue={100}
+          minimumValue={inverse ? -100 : 0}
+          maximumValue={inverse ? 0 : 100}
           thumbTintColor={"#000000"}
           style={{ marginHorizontal: 10 }}
         />

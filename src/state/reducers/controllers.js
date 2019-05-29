@@ -18,14 +18,17 @@ const initialState = {
       icon: require("../../images/mixer.png"),
       name: "MIXER",
       screen: "MixerScreen"
+    },
+    {
+      icon: require("../../images/controller-active.png"),
+      name: "GAMEPAD",
+      screen: "MixerScreen"
     }
   ]
 };
 
 export default function reducer(state = initialState, action) {
   switch (action.type) {
-    case controllersActions.writeToDevice.start:
-      return { ...state, isWriting: true };
     case controllersActions.writeToDevice.success:
       return { ...state, isWriting: false };
     case controllersActions.writeToDevice.failure:
@@ -35,8 +38,8 @@ export default function reducer(state = initialState, action) {
   }
 }
 
-export function writeToDevice(id, data    ) {
-  return { type: controllersActions.writeToDevice.self, id, data};
+export function writeToDevice(id, data) {
+  return { type: controllersActions.writeToDevice.self, id, data };
 }
 export function writeToDeviceStart() {
   return { type: controllersActions.writeToDevice.start };
