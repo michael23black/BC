@@ -19,13 +19,16 @@ const ButtonsContainer = styled.View`
   flex: 1;
   flex-direction: row;
 `;
-// TODO: реализовать сохранения углов в Redux
-// TODO: реализовать команду для сброса положения в начальное
+
 // TODO: реализовать чтобы последнее движение в RUN заканчивалось первом положении по умолчанию
 // TODO: реализовать одновременный переход во всех сервах
-// TODO: реализовать возможность паузы
+// TODO: реализовать сброс всех всех положений параллельно во всех сервах
 // TODO: реализовать управление через джойстики
+
 class MixerScreen extends Component {
+  componentWillUnmount(){
+    this.props.onWriteToDevice(this.props.device, "INITIAL");
+  }
   render() {
     const { device, onWriteToDevice } = this.props;
     return (
@@ -43,6 +46,11 @@ class MixerScreen extends Component {
                 onPress={() => onWriteToDevice(device, "SAVE")}
                 icon={require("../../images/save.png")}
                 text={"SAVE"}
+              />
+              <Button
+                onPress={() => onWriteToDevice(device, "PAUSE")}
+                icon={require("../../images/pause.png")}
+                text={"PAUSE"}
               />
               <Button
                 onPress={() => onWriteToDevice(device, "RUN")}
