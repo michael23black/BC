@@ -28,8 +28,6 @@ const DefaultText = styled.Text`
   color: #cccccc;
 `;
 
-// TODO: реализовать одновременный переход во всех сервах
-// TODO: реализовать сброс всех всех положений параллельно во всех сервах
 // TODO: реализовать управление через джойстики
 
 class MixerScreen extends Component {
