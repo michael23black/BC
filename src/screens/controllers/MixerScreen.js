@@ -19,7 +19,12 @@ const ButtonsContainer = styled.View`
   flex: 1;
   flex-direction: row;
 `;
-
+// TODO: реализовать сохранения углов в Redux
+// TODO: реализовать команду для сброса положения в начальное
+// TODO: реализовать чтобы последнее движение в RUN заканчивалось первом положении по умолчанию
+// TODO: реализовать одновременный переход во всех сервах
+// TODO: реализовать возможность паузы
+// TODO: реализовать управление через джойстики
 class MixerScreen extends Component {
   render() {
     const { device, onWriteToDevice } = this.props;
@@ -49,42 +54,66 @@ class MixerScreen extends Component {
         />
         <ScrollView>
           <Slider
+            value={57}
+            leftIcon={require("../../images/hand-close.png")}
+            rightIcon={require("../../images/hand-open.png")}
             onSlidingComplete={value =>
               onWriteToDevice(device, `S6${parseInt(value)}`)
             }
             label={"GRIP"}
           />
           <Slider
+            inverse
+            value={-20}
+            leftIcon={require("../../images/w-top.png")}
+            rightIcon={require("../../images/w-bottom.png")}
             onSlidingComplete={value =>
               onWriteToDevice(device, `S5${parseInt(value)}`)
             }
             label={"WRIST BEND"}
           />
           <Slider
+            value={46}
+            leftIcon={require("../../images/rotation-left.png")}
+            rightIcon={require("../../images/rotation-right.png")}
             onSlidingComplete={value =>
               onWriteToDevice(device, `S4${parseInt(value)}`)
             }
             label={"WRIST ROTATION"}
           />
           <Slider
+            value={72}
+            leftIcon={require("../../images/e-top.png")}
+            rightIcon={require("../../images/e-bottom.png")}
             onSlidingComplete={value =>
               onWriteToDevice(device, `S3${parseInt(value)}`)
             }
             label={"ELBOW"}
           />
           <Slider
+            inverse
+            value={-88}
+            leftIcon={require("../../images/s-top.png")}
+            rightIcon={require("../../images/s-bottom.png")}
             onSlidingComplete={value =>
               onWriteToDevice(device, `S2${parseInt(value)}`)
             }
             label={"SHOULDER"}
           />
           <Slider
+            inverse
+            value={-47}
+            leftIcon={require("../../images/rotation-left.png")}
+            rightIcon={require("../../images/rotation-right.png")}
             onSlidingComplete={value =>
               onWriteToDevice(device, `S1${parseInt(value)}`)
             }
             label={"BASE"}
           />
           <Slider
+            value={33}
+            leftIcon={require("../../images/fast.png")}
+            rightIcon={require("../../images/slow.png")}
             onSlidingComplete={value =>
               onWriteToDevice(device, `SS${parseInt(value)}`)
             }
