@@ -61,18 +61,7 @@ void setup() {
   Serial.begin(9600);
   
   //Начальные положения сервоприводов
-  Servo_1_Prev_Pos = Servo_1_Init_Pos;
-  Servo_1.write(Servo_1_Prev_Pos);
-  Servo_2_Prev_Pos = Servo_2_Init_Pos;
-  Servo_2.write(Servo_2_Prev_Pos);
-  Servo_3_Prev_Pos = Servo_3_Init_Pos;
-  Servo_3.write(Servo_3_Prev_Pos);
-  Servo_4_Prev_Pos = Servo_4_Init_Pos;
-  Servo_4.write(Servo_4_Prev_Pos);
-  Servo_5_Prev_Pos = Servo_5_Init_Pos;
-  Servo_5.write(Servo_5_Prev_Pos);
-  Servo_6_Prev_Pos = Servo_6_Init_Pos;
-  Servo_6.write(Servo_6_Prev_Pos);
+  toInitial();
 }
 
 void loop(){
@@ -84,42 +73,42 @@ void loop(){
     //Обработчик первого сервопривода 
     if (Data_In.startsWith("S1")){
       Servo_1_Pos = map(parseAngle(Data_In, 2), Bottom_Limit, Top_Limit, Servo_1_Bottom_Limit, Servo_1_Top_Limit);
-      moveServo(Servo_1, Servo_1_Prev_Pos, Servo_1_Pos);
+      moveServoInCourse(Servo_1, Servo_1_Prev_Pos, Servo_1_Pos);
       Servo_1_Prev_Pos = Servo_1_Pos;
     } 
     
     //Обработчик второго сервопривода 
     if (Data_In.startsWith("S2")){
       Servo_2_Pos = map(parseAngle(Data_In, 2), Bottom_Limit, Top_Limit, Servo_2_Bottom_Limit, Servo_2_Top_Limit);
-      moveServo(Servo_2, Servo_2_Prev_Pos, Servo_2_Pos);
+      moveServoInCourse(Servo_2, Servo_2_Prev_Pos, Servo_2_Pos);
       Servo_2_Prev_Pos = Servo_2_Pos;
     }
      
     //Обработчик третьего сервопривода 
     if (Data_In.startsWith("S3")){
       Servo_3_Pos = map(parseAngle(Data_In, 2), Bottom_Limit, Top_Limit, Servo_3_Bottom_Limit, Servo_3_Top_Limit);
-      moveServo(Servo_3, Servo_3_Prev_Pos, Servo_3_Pos);
+      moveServoInCourse(Servo_3, Servo_3_Prev_Pos, Servo_3_Pos);
       Servo_3_Prev_Pos = Servo_3_Pos;
     }
 
      //Обработчик четвертого сервопривода 
     if (Data_In.startsWith("S4")){
       Servo_4_Pos = map(parseAngle(Data_In, 2), Bottom_Limit, Top_Limit, Servo_4_Bottom_Limit, Servo_4_Top_Limit);
-      moveServo(Servo_4, Servo_4_Prev_Pos, Servo_4_Pos);
+      moveServoInCourse(Servo_4, Servo_4_Prev_Pos, Servo_4_Pos);
       Servo_4_Prev_Pos = Servo_4_Pos;
     } 
     
     //Обработчик пятого сервопривода 
     if (Data_In.startsWith("S5")){
       Servo_5_Pos = map(parseAngle(Data_In, 2), Bottom_Limit, Top_Limit, Servo_5_Bottom_Limit, Servo_5_Top_Limit);
-      moveServo(Servo_5, Servo_5_Prev_Pos, Servo_5_Pos);
+      moveServoInCourse(Servo_5, Servo_5_Prev_Pos, Servo_5_Pos);
       Servo_5_Prev_Pos = Servo_5_Pos;
     }
      
     //Обработчик шестого сервопривода 
     if (Data_In.startsWith("S6")){
       Servo_6_Pos = map(parseAngle(Data_In, 2), Bottom_Limit, Top_Limit, Servo_6_Bottom_Limit, Servo_6_Top_Limit);
-      moveServo(Servo_6, Servo_6_Prev_Pos, Servo_6_Pos);
+      moveServoInCourse(Servo_6, Servo_6_Prev_Pos, Servo_6_Pos);
       Servo_6_Prev_Pos = Servo_6_Pos;
     }
 
@@ -143,15 +132,38 @@ void loop(){
     }
     //Обработчик сброса
     if ( Data_In == "RESET") {
-      memset(Servo_1_Story_Pos, 0, sizeof(Servo_1_Story_Pos));
-      memset(Servo_2_Story_Pos, 0, sizeof(Servo_2_Story_Pos));
-      memset(Servo_3_Story_Pos, 0, sizeof(Servo_3_Story_Pos));
-      memset(Servo_4_Story_Pos, 0, sizeof(Servo_4_Story_Pos));
-      memset(Servo_5_Story_Pos, 0, sizeof(Servo_5_Story_Pos));
-      memset(Servo_6_Story_Pos, 0, sizeof(Servo_6_Story_Pos));
-      Index = 0;
+      reset();
+    }
+    if (Data_In == "INITIAL") {
+      reset();
+      toInitial();
     }
   }
+}
+
+//Сброс в начальные значения
+void toInitial() {
+  Servo_1_Prev_Pos = Servo_1_Init_Pos;
+  Servo_1.write(Servo_1_Prev_Pos);
+  Servo_2_Prev_Pos = Servo_2_Init_Pos;
+  Servo_2.write(Servo_2_Prev_Pos);
+  Servo_3_Prev_Pos = Servo_3_Init_Pos;
+  Servo_3.write(Servo_3_Prev_Pos);
+  Servo_4_Prev_Pos = Servo_4_Init_Pos;
+  Servo_4.write(Servo_4_Prev_Pos);
+  Servo_5_Prev_Pos = Servo_5_Init_Pos;
+  Servo_5.write(Servo_5_Prev_Pos);
+  Servo_6_Prev_Pos = Servo_6_Init_Pos;
+  Servo_6.write(Servo_6_Prev_Pos);
+}
+void reset() {
+  memset(Servo_1_Story_Pos, 0, sizeof(Servo_1_Story_Pos));
+  memset(Servo_2_Story_Pos, 0, sizeof(Servo_2_Story_Pos));
+  memset(Servo_3_Story_Pos, 0, sizeof(Servo_3_Story_Pos));
+  memset(Servo_4_Story_Pos, 0, sizeof(Servo_4_Story_Pos));
+  memset(Servo_5_Story_Pos, 0, sizeof(Servo_5_Story_Pos));
+  memset(Servo_6_Story_Pos, 0, sizeof(Servo_6_Story_Pos));
+  Index = 0;
 }
 
 //Парсинга угла из строки
@@ -163,7 +175,7 @@ int parseAngle(String Data, int Prefix_Length) {
 }
 
 //Движение сервопривода
-void moveServo(Servo &Current_Servo, int Servo_Prev_Pos, int Servo_Pos) {
+void moveServoInCourse(Servo &Current_Servo, int Servo_Prev_Pos, int Servo_Pos) {
   if (Servo_Prev_Pos > Servo_Pos) {
     for ( int i = Servo_Prev_Pos; i >= Servo_Pos; i--) {
       Current_Servo.write(i);
@@ -179,15 +191,15 @@ void moveServo(Servo &Current_Servo, int Servo_Prev_Pos, int Servo_Pos) {
 
 //Последовательное движение между положениями
 void runServosConsistently() {
-  while (Data_In != "RESET") {
+  while (Data_In != "RESET" || Data_In == "INITIAL") {
     for (int i = 0; i <= Index - 2; i++) {
       if (Serial.available()) {     
         Data_In = Serial.readString();
-        if ( Data_In == "RUN") {  
+        if ( Data_In == "PAUSE") {  
           while (Data_In != "RUN") {         
             if (Serial.available()) {
               Data_In = Serial.readString();
-              if ( Data_In == "RESET") {     
+              if ( Data_In == "RESET" || Data_In == "INITIAL") {     
                 break;
               }
             }
@@ -198,12 +210,15 @@ void runServosConsistently() {
           Speed = map(parseAngle(Data_In, 2), Bottom_Limit, Top_Limit, Speed_Bottom_Limit, Speed_Top_Limit);
         }
       }
-      moveServo(Servo_1, Servo_1_Story_Pos[i], Servo_1_Story_Pos[i + 1]);
-      moveServo(Servo_2, Servo_2_Story_Pos[i], Servo_2_Story_Pos[i + 1]);
-      moveServo(Servo_3, Servo_3_Story_Pos[i], Servo_3_Story_Pos[i + 1]);
-      moveServo(Servo_4, Servo_4_Story_Pos[i], Servo_4_Story_Pos[i + 1]);
-      moveServo(Servo_5, Servo_5_Story_Pos[i], Servo_5_Story_Pos[i + 1]);
-      moveServo(Servo_6, Servo_6_Story_Pos[i], Servo_6_Story_Pos[i + 1]);
+      moveServoInCourse(Servo_1, Servo_1_Story_Pos[i], Servo_1_Story_Pos[i + 1]);
+      moveServoInCourse(Servo_2, Servo_2_Story_Pos[i], Servo_2_Story_Pos[i + 1]);
+      moveServoInCourse(Servo_3, Servo_3_Story_Pos[i], Servo_3_Story_Pos[i + 1]);
+      moveServoInCourse(Servo_4, Servo_4_Story_Pos[i], Servo_4_Story_Pos[i + 1]);
+      moveServoInCourse(Servo_5, Servo_5_Story_Pos[i], Servo_5_Story_Pos[i + 1]);
+      moveServoInCourse(Servo_6, Servo_6_Story_Pos[i], Servo_6_Story_Pos[i + 1]);
     }
   }
+}
+void runServosParallel() {
+
 }

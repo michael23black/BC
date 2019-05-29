@@ -23,3 +23,13 @@ export function connectDevice(id) {
     return response;
   });
 }
+export function disconnectDevice(id) {
+  return BluetoothSerial.disconnect(id).then(response => {
+    return response;
+  });
+}
+export function disconnectAll() {
+  return BluetoothSerial.disconnectAll().then(response => {
+    return response;
+  });
+}

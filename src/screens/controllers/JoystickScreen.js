@@ -18,6 +18,9 @@ const ButtonsContainer = styled.View`
 `;
 
 class JoystickScreen extends Component {
+  componentWillUnmount() {
+    this.props.onWriteToDevice(this.props.device, "INITIAL");
+  }
   render() {
     const { device, onWriteToDevice } = this.props;
     return (
