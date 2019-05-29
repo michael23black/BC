@@ -3,11 +3,13 @@ import actionGenerator from "../../utils/actionGenerator";
 const reducerName = "controllers";
 
 export const controllersActions = {
+  updateState: actionGenerator(reducerName, "updateState", ["self"]),
   writeToDevice: actionGenerator(reducerName, "writeToDevice")
 };
 
 const initialState = {
   isWriting: false,
+  savedPositions: 0,
   controllers: [
     {
       icon: require("../../images/joystick.png"),
@@ -29,6 +31,10 @@ const initialState = {
 
 export default function reducer(state = initialState, action) {
   switch (action.type) {
+    case controllersActions.updateState.self:
+      return { ...state, ...action.data };
+    case controllersActions.writeToDevice.start:
+      return { ...state, isWriting: true };
     case controllersActions.writeToDevice.success:
       return { ...state, isWriting: false };
     case controllersActions.writeToDevice.failure:
@@ -36,6 +42,10 @@ export default function reducer(state = initialState, action) {
     default:
       return state;
   }
+}
+
+export function updateState(data) {
+  return { type: controllersActions.updateState.self, data };
 }
 
 export function writeToDevice(id, data) {

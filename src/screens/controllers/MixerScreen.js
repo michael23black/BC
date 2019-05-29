@@ -19,18 +19,25 @@ const ButtonsContainer = styled.View`
   flex: 1;
   flex-direction: row;
 `;
+const DefaultText = styled.Text`
+  text-align: center;
+  width: 100%;
+  margin: 10px;
+  font-family: "Averin";
+  font-size: 20px;
+  color: #cccccc;
+`;
 
-// TODO: реализовать чтобы последнее движение в RUN заканчивалось первом положении по умолчанию
 // TODO: реализовать одновременный переход во всех сервах
 // TODO: реализовать сброс всех всех положений параллельно во всех сервах
 // TODO: реализовать управление через джойстики
 
 class MixerScreen extends Component {
-  componentWillUnmount(){
+  componentWillUnmount() {
     this.props.onWriteToDevice(this.props.device, "INITIAL");
   }
   render() {
-    const { device, onWriteToDevice } = this.props;
+    const { device, onWriteToDevice, savedPositions } = this.props;
     return (
       <Container>
         <Header
@@ -127,6 +134,7 @@ class MixerScreen extends Component {
             }
             label={"SPEED"}
           />
+          <DefaultText>SAVED POSITIONS: {savedPositions}</DefaultText>
         </ScrollView>
       </Container>
     );
@@ -135,7 +143,8 @@ class MixerScreen extends Component {
 
 const mapStateToProps = state => ({
   isWriting: state.controllers.isWriting,
-  device: state.connection.device
+  device: state.connection.device,
+  savedPositions: state.controllers.savedPositions
 });
 const mapDispatchToProps = dispatch => ({
   onWriteToDevice: (id, data) => {
