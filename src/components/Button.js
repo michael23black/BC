@@ -7,7 +7,7 @@ const Container = styled.View`
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  height: 50px;
+  height: 49px;
   background-color: #ffffff;
 `;
 const Icon = styled.Image`

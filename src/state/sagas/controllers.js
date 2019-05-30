@@ -1,4 +1,4 @@
-import { select, call, put, takeLatest } from "redux-saga/effects";
+import { select, call, put, takeLatest} from "redux-saga/effects";
 
 import {
   controllersActions,
@@ -27,6 +27,13 @@ function* writeToDeviceSaga({ id, data }) {
   }
 }
 
+function* fastWriteToDeviceSaga({ id, data }) {
+  try {
+    yield call(writeToDeviceApi, id, data);
+  } catch (error) {}
+}
+
 export default [
-  takeLatest(controllersActions.writeToDevice.self, writeToDeviceSaga)
+  takeLatest(controllersActions.writeToDevice.self, writeToDeviceSaga),
+  takeLatest(controllersActions.fastWriteToDevice.self, fastWriteToDeviceSaga)
 ];

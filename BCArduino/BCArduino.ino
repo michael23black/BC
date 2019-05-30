@@ -26,6 +26,9 @@
 #define Speed_Bottom_Limit 5
 #define Speed_Top_Limit 50
 
+#define Angle_Bottom_Limit 1
+#define Angle_Top_Limit 10
+
 Servo Servo_1;
 Servo Servo_2;
 Servo Servo_3;
@@ -39,6 +42,7 @@ byte Servo_1_Story_Pos[50], Servo_2_Story_Pos[50], Servo_3_Story_Pos[50], Servo_
 
 String Data_In = "";
 byte Speed = 20;
+byte Angle = 5;
 int Index = 0;
 
 void setup() {
@@ -62,17 +66,26 @@ void setup() {
 void loop(){
   if (Serial.available()) {
     Data_In = Serial.readString();
-    
-    Servo_Watcher("S1", Servo_1, Servo_1_Prev_Pos, Servo_1_Pos, Servo_1_Bottom_Limit, Servo_1_Top_Limit, 2);
-    Servo_Watcher("S2", Servo_2, Servo_2_Prev_Pos, Servo_2_Pos, Servo_2_Bottom_Limit, Servo_2_Top_Limit, 2);
-    Servo_Watcher("S3", Servo_3, Servo_3_Prev_Pos, Servo_3_Pos, Servo_3_Bottom_Limit, Servo_3_Top_Limit, 2);
-    Servo_Watcher("S4", Servo_4, Servo_4_Prev_Pos, Servo_4_Pos, Servo_4_Bottom_Limit, Servo_4_Top_Limit, 2);
-    Servo_Watcher("S5", Servo_5, Servo_5_Prev_Pos, Servo_5_Pos, Servo_5_Bottom_Limit, Servo_5_Top_Limit, 2);
-    Servo_Watcher("S6", Servo_6, Servo_6_Prev_Pos, Servo_6_Pos, Servo_6_Bottom_Limit, Servo_6_Top_Limit, 2);
 
-    Speed_Watcher();
     
-    if (Data_In == "SAVE") {
+    Servo_Delta_Watcher("SF1", Servo_1_Prev_Pos, Servo_1_Pos, Servo_1_Bottom_Limit, Servo_1_Top_Limit);
+    Servo_Delta_Watcher("SF2", Servo_2_Prev_Pos, Servo_2_Pos, Servo_2_Bottom_Limit, Servo_2_Top_Limit);
+    Servo_Delta_Watcher("SF3", Servo_3_Prev_Pos, Servo_3_Pos, Servo_3_Bottom_Limit, Servo_3_Top_Limit);
+    Servo_Delta_Watcher("SF4", Servo_4_Prev_Pos, Servo_4_Pos, Servo_4_Bottom_Limit, Servo_4_Top_Limit);
+    Servo_Delta_Watcher("SF5", Servo_5_Prev_Pos, Servo_5_Pos, Servo_5_Bottom_Limit, Servo_5_Top_Limit);
+    Servo_Delta_Watcher("SF6", Servo_6_Prev_Pos, Servo_6_Pos, Servo_6_Bottom_Limit, Servo_6_Top_Limit);
+    
+    Servo_Watcher("S1", Servo_1_Prev_Pos, Servo_1_Pos, Servo_1_Bottom_Limit, Servo_1_Top_Limit, 2);
+    Servo_Watcher("S2", Servo_2_Prev_Pos, Servo_2_Pos, Servo_2_Bottom_Limit, Servo_2_Top_Limit, 2);
+    Servo_Watcher("S3", Servo_3_Prev_Pos, Servo_3_Pos, Servo_3_Bottom_Limit, Servo_3_Top_Limit, 2);
+    Servo_Watcher("S4", Servo_4_Prev_Pos, Servo_4_Pos, Servo_4_Bottom_Limit, Servo_4_Top_Limit, 2);
+    Servo_Watcher("S5", Servo_5_Prev_Pos, Servo_5_Pos, Servo_5_Bottom_Limit, Servo_5_Top_Limit, 2);
+    Servo_Watcher("S6", Servo_6_Prev_Pos, Servo_6_Pos, Servo_6_Bottom_Limit, Servo_6_Top_Limit, 2);
+
+    Watcher("SS", Speed, Speed_Bottom_Limit, Speed_Top_Limit, 2);
+    Watcher("SA", Angle, Angle_Bottom_Limit, Angle_Top_Limit, 2);
+    
+    if (Data_In.startsWith("SAVE")) {
       Servo_1_Story_Pos[Index] = Servo_1_Pos;
       Servo_2_Story_Pos[Index] = Servo_2_Pos;
       Servo_3_Story_Pos[Index] = Servo_3_Pos;
@@ -82,34 +95,76 @@ void loop(){
       Index++;             
     }
     
-    if (Data_In == "RUN" && Index > 1) {
+    if (Data_In.startsWith("RUN") && Index > 1) {
       Run_Servos_In_Loop();
     }
     
-    if ( Data_In == "RESET") {
+    if ( Data_In.startsWith("RESET")) {
       Reset();
     }
     
-    if (Data_In == "INITIAL") {
+    if (Data_In.startsWith("INITIAL")) {
       Reset();
       To_Initial();
     }
   }
 }
-void Servo_Watcher(String Watched_Value, Servo &Current_Servo, byte &Servo_Prev_Pos, byte &Servo_Pos, byte Servo_Bottom_Limit, byte Servo_Top_Limit, byte Prefix_Length) {
+void Servo_Watcher(String Watched_Value, byte &Servo_Prev_Pos, byte &Servo_Pos, byte Servo_Bottom_Limit, byte Servo_Top_Limit, byte Prefix_Length) {
   if(Data_In.startsWith(Watched_Value)) {
-    byte New_Angle = constrain(Parse_Angle(Data_In, Prefix_Length), Bottom_Limit, Top_Limit);
+    byte New_Angle = constrain(Parse_Data(Data_In, Prefix_Length), Bottom_Limit, Top_Limit);
     Servo_Pos = map(New_Angle, Bottom_Limit, Top_Limit, Servo_Bottom_Limit, Servo_Top_Limit);
     Move_To(Servo_1_Prev_Pos, Servo_2_Prev_Pos, Servo_3_Prev_Pos, Servo_4_Prev_Pos, Servo_5_Prev_Pos, Servo_6_Prev_Pos, Servo_1_Pos, Servo_2_Pos, Servo_3_Pos, Servo_4_Pos, Servo_5_Pos, Servo_6_Pos);
     Servo_Prev_Pos = Servo_Pos;
   }
 }
-void Speed_Watcher() {
-  if (Data_In.startsWith("SS")){
-    Speed = map(Parse_Angle(Data_In, 2), Bottom_Limit, Top_Limit, Speed_Bottom_Limit, Speed_Top_Limit);
+void Servo_Delta_Watcher(String Watched_Value, byte &Servo_Prev_Pos, byte &Servo_Pos, byte Servo_Bottom_Limit, byte Servo_Top_Limit) {
+  if(Data_In.startsWith(Watched_Value)) {  
+    int Direction = 0;
+    String New_Data_In = Data_In;
+    
+    if(New_Data_In.charAt(3) == '1'){
+      Direction = 1;
+    } else if (New_Data_In.charAt(3) == '0'){
+      Direction = -1;
+    }
+    
+    while(true){
+      if(Serial.available()) {
+        Data_In = Serial.readString();
+        if(Data_In != New_Data_In) {
+          if(Data_In.startsWith("STOP")) {
+            Data_In = Data_In.substring(4, Data_In.length());
+            Servo_Delta_Watcher("SF1", Servo_1_Prev_Pos, Servo_1_Pos, Servo_1_Bottom_Limit, Servo_1_Top_Limit);
+            Servo_Delta_Watcher("SF2", Servo_2_Prev_Pos, Servo_2_Pos, Servo_2_Bottom_Limit, Servo_2_Top_Limit);
+            Servo_Delta_Watcher("SF3", Servo_3_Prev_Pos, Servo_3_Pos, Servo_3_Bottom_Limit, Servo_3_Top_Limit);
+            Servo_Delta_Watcher("SF4", Servo_4_Prev_Pos, Servo_4_Pos, Servo_4_Bottom_Limit, Servo_4_Top_Limit);
+            Servo_Delta_Watcher("SF5", Servo_5_Prev_Pos, Servo_5_Pos, Servo_5_Bottom_Limit, Servo_5_Top_Limit);
+            Servo_Delta_Watcher("SF6", Servo_6_Prev_Pos, Servo_6_Pos, Servo_6_Bottom_Limit, Servo_6_Top_Limit);
+          } 
+          if(Data_In == "START" || Data_In == "INITIAL" || Data_In == "RESET") {
+          } else if(Data_In.endsWith("START") || Data_In.endsWith("INITIAL") || Data_In.endsWith("RESET")) {
+            Data_In = Data_In.substring(4, Data_In.length());
+          }
+          break;
+        } 
+      }
+      
+      int Current_Servo_Pos = Servo_Prev_Pos + Direction * Angle;
+      if(Current_Servo_Pos > Servo_Bottom_Limit && Current_Servo_Pos < Servo_Top_Limit) {
+        Servo_Pos = Current_Servo_Pos;
+        Move_To(Servo_1_Prev_Pos, Servo_2_Prev_Pos, Servo_3_Prev_Pos, Servo_4_Prev_Pos, Servo_5_Prev_Pos, Servo_6_Prev_Pos, Servo_1_Pos, Servo_2_Pos, Servo_3_Pos, Servo_4_Pos, Servo_5_Pos, Servo_6_Pos);
+        Servo_Prev_Pos = Servo_Pos;
+      }
+      delay(10);
+    }
+  }
+}
+void Watcher(String Watched_Value, byte &Variable, byte Variable_Bottom_Limit, byte Variable_Top_Limit, byte Prefix_Length) {
+  if (Data_In.startsWith(Watched_Value)){
+    Variable = map(Parse_Data(Data_In, Prefix_Length), Bottom_Limit, Top_Limit, Variable_Bottom_Limit, Variable_Top_Limit);
   } 
 }
-int Parse_Angle(String Data, byte Prefix_Length) {
+int Parse_Data(String Data, byte Prefix_Length) {
   String Sub_Data = Data.substring(Prefix_Length, Data.length());
   return Sub_Data.toInt();
 }
@@ -147,7 +202,7 @@ void Run_Servos_In_Loop() {
           Servo_6_Pos = Servo_6_Last_Pos;
           break;
         }
-        Speed_Watcher();
+        Watcher("SS", Speed, Speed_Bottom_Limit, Speed_Top_Limit, 2);
       }
       Move_To(Servo_1_Story_Pos[i], Servo_2_Story_Pos[i], Servo_3_Story_Pos[i], Servo_4_Story_Pos[i], Servo_5_Story_Pos[i], Servo_6_Story_Pos[i], Servo_1_Story_Pos[i + 1], Servo_2_Story_Pos[i + 1], Servo_3_Story_Pos[i + 1], Servo_4_Story_Pos[i + 1], Servo_5_Story_Pos[i + 1], Servo_6_Story_Pos[i + 1]);
       Servo_1_Last_Pos = Servo_1_Story_Pos[i + 1];
