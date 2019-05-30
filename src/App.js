@@ -12,7 +12,7 @@ import store from "./store";
 
 import ControllersScreen from "./screens/controllers/ControllersScreen";
 import MixerScreen from "./screens/controllers/MixerScreen";
-import JoystickScreen from "./screens/controllers/JoystickScreen";
+import ButtonsScreen from "./screens/controllers/ButtonsScreen";
 import ConnectionScreen from "./screens/connection/ConnectionScreen";
 
 import { BR_DARK_COLOR } from "./styles";
@@ -64,7 +64,7 @@ const ControllersStack = createStackNavigator(
   {
     ControllersScreen: ControllersScreen,
     MixerScreen: MixerScreen,
-    JoystickScreen: JoystickScreen
+    ButtonsScreen: ButtonsScreen
   },
   {
     initialRouteName: "ControllersScreen",

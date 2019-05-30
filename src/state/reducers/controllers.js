@@ -4,7 +4,8 @@ const reducerName = "controllers";
 
 export const controllersActions = {
   updateState: actionGenerator(reducerName, "updateState", ["self"]),
-  writeToDevice: actionGenerator(reducerName, "writeToDevice")
+  writeToDevice: actionGenerator(reducerName, "writeToDevice"),
+  fastWriteToDevice: actionGenerator(reducerName, "fastWriteToDevice", ["self"])
 };
 
 const initialState = {
@@ -12,20 +13,15 @@ const initialState = {
   savedPositions: 0,
   controllers: [
     {
-      icon: require("../../images/joystick.png"),
-      name: "JOYSTICK",
-      screen: "JoystickScreen"
+      icon: require("../../images/button.png"),
+      name: "BUTTONS",
+      screen: "ButtonsScreen"
     },
     {
       icon: require("../../images/mixer.png"),
       name: "MIXER",
       screen: "MixerScreen"
     },
-    {
-      icon: require("../../images/controller-active.png"),
-      name: "GAMEPAD",
-      screen: "MixerScreen"
-    }
   ]
 };
 
@@ -50,6 +46,9 @@ export function updateState(data) {
 
 export function writeToDevice(id, data) {
   return { type: controllersActions.writeToDevice.self, id, data };
+}
+export function fastWriteToDevice(id, data) {
+  return { type: controllersActions.fastWriteToDevice.self, id, data };
 }
 export function writeToDeviceStart() {
   return { type: controllersActions.writeToDevice.start };
