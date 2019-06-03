@@ -1,4 +1,4 @@
-import { select, call, put, takeLatest } from "redux-saga/effects";
+import { select, call, race, delay, put, takeLatest } from "redux-saga/effects";
 
 import {
   connectionActions,
@@ -17,7 +17,8 @@ import {
   scanUnpairedDevices as scanUnpairedDevicesApi,
   connectDevice as connectDeviceApi,
   disconnectDevice as disconnectDeviceApi,
-  disconnectAll as disconnectAllApi
+  disconnectAll as disconnectAllApi,
+  pairDevice as pairDeviceApi
 } from "../api/connection";
 
 const getDevicesList = state => state.connection.devices;
@@ -49,19 +50,35 @@ function* connectDeviceSaga({ id, callback = () => null }) {
     callback(true);
     yield put(connectDeviceStart());
     let devices = yield select(getDevicesList);
-    const deviceConnectStatus = devices.find(device => device.id === id)
-      .connected;
-    if (deviceConnectStatus) {
-      yield call(disconnectDeviceApi, id);
-    } else {
-      yield call(connectDeviceApi, id);
+    const { connected, paired } = devices.find(device => device.id === id);
+    let pairResponse;
+    if (!paired) {
+      ({ pairResponse } = yield race({
+        pairResponse: call(pairDeviceApi, id),
+        timeout: delay(15000)
+      }));
+      if (pairResponse) {
+        devices = devices.map(device => ({
+          ...device,
+          paired: id === device.id || device.paired
+        }));
+      }
     }
-    devices = devices.map(device => ({
-      ...device,
-      connected: id === device.id && !deviceConnectStatus
-    }));
-    yield put(updateState({ device: id, devices }));
-    yield put(connectDeviceSuccess());
+    if (pairResponse || paired) {
+      if (connected) {
+        yield call(disconnectDeviceApi, id);
+      } else {
+        yield call(connectDeviceApi, id);
+      }
+      devices = devices.map(device => ({
+        ...device,
+        connected: id === device.id && !connected
+      }));
+      yield put(updateState({ device: id, devices }));
+      yield put(connectDeviceSuccess());
+    } else {
+      yield put(connectDeviceFailure());
+    }
     callback(false);
   } catch (error) {
     yield put(connectDeviceFailure());

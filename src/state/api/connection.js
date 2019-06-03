@@ -33,6 +33,11 @@ export function scanUnpairedDevices() {
     }));
   });
 }
+export function pairDevice(id) {
+  return BluetoothSerial.pairDevice(id).then(response => {
+    return response;
+  });
+}
 export function connectDevice(id) {
   return BluetoothSerial.connect(id).then(response => {
     return response;
