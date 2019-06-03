@@ -53,8 +53,8 @@ export function scanDevicesFailure() {
   return { type: connectionActions.scanDevices.failure };
 }
 
-export function connectDevice(id) {
-  return { type: connectionActions.connectDevice.self, id };
+export function connectDevice(id, callback) {
+  return { type: connectionActions.connectDevice.self, id, callback};
 }
 export function connectDeviceStart() {
   return { type: connectionActions.connectDevice.start };

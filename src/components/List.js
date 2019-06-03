@@ -7,6 +7,7 @@ import { SCREEN_W } from "../styles";
 const Container = styled.View`
   flex-flow: row wrap;
   width: ${SCREEN_W}px;
+  margin-bottom: 10px;
 `;
 const DefaultText = styled.Text`
   text-align: center;
