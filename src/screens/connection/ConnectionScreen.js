@@ -44,7 +44,8 @@ class ConnectionScreen extends Component {
           >
             {devices.map((item, index) => (
               <ListItem
-                onPress={() => onConnectDevice(item.id)}
+                inProgress={isConnecting}
+                onPress={(callback) => onConnectDevice(item.id, callback)}
                 {...item}
                 index={index}
                 key={index}
@@ -66,8 +67,8 @@ const mapDispatchToProps = dispatch => ({
   onScanDevices: () => {
     dispatch(scanDevices());
   },
-  onConnectDevice: id => {
-    dispatch(connectDevice(id));
+  onConnectDevice: (id, callback) => {
+    dispatch(connectDevice(id, callback));
   }
 });
 

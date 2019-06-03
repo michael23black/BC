@@ -1,5 +1,9 @@
 import React, { Component } from "react";
-import { TouchableWithoutFeedback } from "react-native";
+import {
+  ActivityIndicator,
+  TouchableWithoutFeedback,
+  View
+} from "react-native";
 import styled, { css } from "styled-components";
 
 import { SCREEN_W } from "../styles";
@@ -12,18 +16,10 @@ const Wrap = styled.View`
   flex: 1;
   align-items: center;
   justify-content: center;
-  margin: 10px;
+  margin: 10px 10px 0 10px;
   border: 1px solid #000000;
   border-radius: 5px;
   background-color: #ffffff;
-  ${props =>
-    props.index > 1
-      ? css`
-          margin-top: 0;
-        `
-      : css`
-          margin-top: 10px;
-        `}
   ${props =>
     props.index % 2 === 0
       ? css`
@@ -38,18 +34,61 @@ const Icon = styled.Image`
   width: ${SCREEN_W / 4}px;
 `;
 const Label = styled.Text`
+  text-align: center;
   font-family: "Averin";
   font-size: 15px;
   color: black;
 `;
+const SpinerContainer = styled.View`
+  position: absolute;
+  align-items: center;
+  justify-content: center;
+  height: ${SCREEN_W / 2 - 10}px;
+  width: ${SCREEN_W / 2 - 15}px;
+  border-radius: 5px;
+  background-color: rgba(0, 0, 0, 0.1);
+  z-index: 1;
+`;
 
 class ListItem extends Component {
+  static defaultProps = {
+    isConnecting: false
+  };
+  constructor(props) {
+    super(props);
+    this.state = {
+      needIndicator: false
+    };
+  }
+  spinerCallback = (status) => {
+    this.setState(state => ({
+      needIndicator: status
+    }));
+  };
   render() {
-    const { id, icon, name, index, paired, connected, onPress } = this.props;
+    const { needIndicator } = this.state;
+    const {
+      id,
+      icon,
+      name,
+      index,
+      paired,
+      connected,
+      onPress,
+      inProgress
+    } = this.props;
     return (
       <Container>
-        <TouchableWithoutFeedback onPress={onPress}>
+        <TouchableWithoutFeedback
+          disabled={inProgress}
+          onPress={() => onPress(this.spinerCallback)}
+        >
           <Wrap index={index}>
+            {inProgress && needIndicator && (
+              <SpinerContainer>
+                  <ActivityIndicator size={80} color={"#000000"} />
+              </SpinerContainer>
+            )}
             {icon ? (
               <Icon source={icon} />
             ) : (

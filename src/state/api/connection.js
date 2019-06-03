@@ -1,4 +1,5 @@
 import BluetoothSerial from "react-native-bluetooth-serial-next";
+import { PermissionsAndroid } from "react-native";
 
 export function scanPairedDevices() {
   return BluetoothSerial.list().then(response => {
@@ -7,6 +8,20 @@ export function scanPairedDevices() {
       paired: true,
       connected: false
     }));
+  });
+}
+export function checkLocationPermissions() {
+  return PermissionsAndroid.check(
+    PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION
+  ).then(response => {
+    return response;
+  });
+}
+export function requestLocationPermissions() {
+  return PermissionsAndroid.request(
+    PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION
+  ).then(response => {
+    return response;
   });
 }
 export function scanUnpairedDevices() {
