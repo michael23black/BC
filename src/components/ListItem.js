@@ -1,9 +1,5 @@
 import React, { Component } from "react";
-import {
-  ActivityIndicator,
-  TouchableWithoutFeedback,
-  View
-} from "react-native";
+import { ActivityIndicator, TouchableWithoutFeedback } from "react-native";
 import styled, { css } from "styled-components";
 
 import { SCREEN_W } from "../styles";
@@ -60,7 +56,7 @@ class ListItem extends Component {
       needIndicator: false
     };
   }
-  spinerCallback = (status) => {
+  spinerCallback = status => {
     this.setState(state => ({
       needIndicator: status
     }));
@@ -86,7 +82,7 @@ class ListItem extends Component {
           <Wrap index={index}>
             {inProgress && needIndicator && (
               <SpinerContainer>
-                  <ActivityIndicator size={80} color={"#000000"} />
+                <ActivityIndicator size={80} color={"#000000"} />
               </SpinerContainer>
             )}
             {icon ? (
